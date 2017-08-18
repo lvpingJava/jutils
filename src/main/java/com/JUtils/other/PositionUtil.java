@@ -71,7 +71,7 @@ public class PositionUtil {
     }
 
     /**
-     * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换算法 将 GCJ-02 坐标转换成 BD-09 坐标
+     * 火星坐标系 (GCJ-02) 与百度坐标系 (DB-09(百度度坐标系)) 的转换算法 将 GCJ-02 坐标转换成 DB-09(百度度坐标系) 坐标
      *
      * @param gg_lat
      * @param gg_lon
@@ -86,7 +86,7 @@ public class PositionUtil {
     }
 
     /**
-     * * 火星坐标系 (GCJ-02) 与百度坐标系 (BD-09) 的转换算法 * * 将 BD-09 坐标转换成GCJ-02 坐标 * * @param
+     * * 火星坐标系 (GCJ-02) 与百度坐标系 (DB-09(百度度坐标系)) 的转换算法 * * 将 DB-09(百度度坐标系) 坐标转换成GCJ-02 坐标 * * @param
      * bd_lat * @param bd_lon * @return
      */
     public static Gps bd09_To_Gcj02(double bd_lat, double bd_lon) {
@@ -99,7 +99,7 @@ public class PositionUtil {
     }
 
     /**
-     * (BD-09)-->84
+     * (DB-09(百度度坐标系))-->84
      * @param bd_lat
      * @param bd_lon
      * @return

@@ -6,6 +6,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,13 +75,29 @@ public class BeanMapConvert {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(object.getClass());
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-
             for (PropertyDescriptor property : propertyDescriptors) {
                 String key = property.getName();
                 if (map.containsKey(key)) {
                     Object value = map.get(key);
-                    // 得到property对应的setter方法
                     Method setter = property.getWriteMethod();
+                    String type=property.getPropertyType().getName();
+                    if(value!=null){
+                        if (type.equals("java.lang.Integer")) {
+                            value=Integer.parseInt(value.toString());
+                        }else if (type.equals("java.lang.Boolean")) {
+                            value=Boolean.parseBoolean(value.toString());
+                        }else if  (type.equals("java.lang.Long")) {
+                            value=Long.parseLong(value.toString());
+                        }else if  (type.equals("java.lang.Double")) {
+                            value=Double.parseDouble(value.toString());
+                        }else if  (type.equals("java.lang.Float")) {
+                            value=Float.parseFloat(value.toString());
+                        }else if  (type.equals("java.util.Date")) {
+                            long lt = new Long(value.toString());
+                            value = new Date(lt);
+                        }
+                        // 如果有需要,可以仿照上面继续进行扩充,再增加对其它类型的判断
+                    }
                     setter.invoke(object, value);
                 }
             }
@@ -94,3 +111,4 @@ public class BeanMapConvert {
         return object;
     }
 }
+

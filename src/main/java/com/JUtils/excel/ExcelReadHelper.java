@@ -2,14 +2,12 @@ package com.JUtils.excel;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,14 +19,61 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.JUtils.date.DateUtils;
 import com.JUtils.date.DateFormatUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 解析Excel，支持2003、2007
  * 
- * @Author:chenssy
- * @date:2014年8月3日
+ * @Author:lvping
+ * @date:2017年8月3日
  */
 public class ExcelReadHelper {
+
+	/**该方法适用于springMVC，springBoot文件上传
+	 * 解析Excel 支持2003、2007<br>
+	 * 利用反射技术完成propertis到obj对象的映射，并将相对应的值利用相对应setter方法设置到obj对象中最后add到list集合中<br>
+	 * properties、obj需要符合如下规则：<br>
+	 * 1、obj对象必须存在默认构造函数，且属性需存在setter方法<br>
+	 * 2、properties中的值必须是在obj中存在的属性，且obj中必须存在这些属性的setter方法。<br>
+	 * 3、properties中值得顺序要与Excel中列相相应，否则值会设置错：<br>
+	 * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;excel:编号    姓名         年龄       性别<br>
+	 * properties:id  name  age  sex<br>
+	 *
+	 * @autor:chenssy
+	 * @date:2014年8月9日
+	 *
+	 * @param：file
+	 * 				待解析的Excel文件
+	 * @param properties
+	 * 				与Excel相对应的属性
+	 * @param obj
+	 * 				反射对象的Class
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("rawtypes")
+	public static List<Object> excelRead(MultipartFile mfile, String[] properties, Class obj) throws Exception{
+		Workbook book = null;
+		//初始化输入流
+		InputStream is = null;
+		try {
+			File uploadDir = new  File("D:\\fileupload");
+			//创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
+			if (!uploadDir.exists()) uploadDir.mkdirs();
+			//新建一个文件
+			File tempFile = new File("D:\\fileupload\\" + new Date().getTime() + ".xlsx");
+
+			//将上传的文件写入新建的文件中
+			mfile.transferTo(tempFile);
+			//根据新建的文件实例化输入流
+			is = new FileInputStream(tempFile);
+			book = new XSSFWorkbook(is);     //解析2003
+		} catch (Exception e) {
+			book = new HSSFWorkbook(is);      //解析2007
+		}
+
+		return getExcelContent(book,properties,obj);
+	}
 	
 	/**
 	 * 解析Excel 支持2003、2007<br>
